@@ -1,0 +1,187 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payload-config
+data:
+  payload.config.ts: |
+    import { buildConfig } from 'payload'
+    import { postgresAdapter } from '@payloadcms/db-postgres'
+    import { lexicalEditor } from '@payloadcms/richtext-lexical'
+    import path from 'path'
+    import { fileURLToPath } from 'url'
+
+    const __filename = fileURLToPath(import.meta.url)
+    const __dirname = path.dirname(__filename)
+
+    export default buildConfig({
+      serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL || 'http://localhost:3000',
+      admin: {
+        user: 'users',
+        meta: {
+          titleSuffix: ' - Payload CMS Demo',
+          favicon: '/favicon.ico'
+        },
+        avatar: 'default'
+      },
+      collections: [
+        {
+          slug: 'users',
+          auth: true,
+          access: {
+            create: () => true,
+            read: () => true,
+            update: () => true,
+            delete: () => true,
+          },
+          fields: [
+            {
+              name: 'name',
+              type: 'text',
+              required: true
+            },
+            {
+              name: 'role',
+              type: 'select',
+              options: ['admin', 'editor', 'user'],
+              defaultValue: 'user'
+            }
+          ]
+        },
+        {
+          slug: 'pages',
+          admin: {
+            useAsTitle: 'title'
+          },
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              required: true
+            },
+            {
+              name: 'slug',
+              type: 'text',
+              required: true,
+              unique: true
+            },
+            {
+              name: 'content',
+              type: 'richText',
+              editor: lexicalEditor({})
+            },
+            {
+              name: 'meta',
+              type: 'group',
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text'
+                },
+                {
+                  name: 'description',
+                  type: 'textarea'
+                }
+              ]
+            }
+          ]
+        },
+        {
+          slug: 'posts',
+          admin: {
+            useAsTitle: 'title'
+          },
+          versions: {
+            drafts: true
+          },
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              required: true
+            },
+            {
+              name: 'slug',
+              type: 'text',
+              required: true,
+              unique: true
+            },
+            {
+              name: 'excerpt',
+              type: 'textarea'
+            },
+            {
+              name: 'content',
+              type: 'richText',
+              editor: lexicalEditor({})
+            },
+            {
+              name: 'publishedDate',
+              type: 'date'
+            },
+            {
+              name: 'author',
+              type: 'relationship',
+              relationTo: 'users'
+            },
+            {
+              name: 'categories',
+              type: 'relationship',
+              relationTo: 'categories',
+              hasMany: true
+            },
+            {
+              name: 'featuredImage',
+              type: 'upload',
+              relationTo: 'media'
+            }
+          ]
+        },
+        {
+          slug: 'categories',
+          admin: {
+            useAsTitle: 'name'
+          },
+          fields: [
+            {
+              name: 'name',
+              type: 'text',
+              required: true
+            },
+            {
+              name: 'slug',
+              type: 'text',
+              required: true,
+              unique: true
+            },
+            {
+              name: 'description',
+              type: 'textarea'
+            }
+          ]
+        },
+        {
+          slug: 'media',
+          upload: {
+            staticDir: path.resolve(__dirname, '../uploads'),
+            mimeTypes: ['image/*']
+          },
+          fields: [
+            {
+              name: 'alt',
+              type: 'text',
+              required: true
+            }
+          ]
+        }
+      ],
+      db: postgresAdapter({
+        pool: {
+          connectionString: process.env.DATABASE_URL
+        }
+      }),
+      editor: lexicalEditor({}),
+      typescript: {
+        outputFile: path.resolve(__dirname, '../payload-types.ts')
+      },
+      plugins: []
+    })
