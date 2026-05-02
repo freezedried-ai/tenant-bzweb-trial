@@ -1,0 +1,25 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: postgres
+  namespace: flux-system
+spec:
+  interval: 30m
+  targetNamespace: ${TENANT_NAMESPACE}
+  path: ./postgres/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: tenant-repos
+  dependsOn:
+    - name: vars
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: replacements
+      - kind: Secret
+        name: replacement
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
