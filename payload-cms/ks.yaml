@@ -1,0 +1,26 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: payload-cms
+  namespace: flux-system
+spec:
+  interval: 30m
+  targetNamespace: ${TENANT_NAMESPACE}
+  path: ./payload-cms/overlays/${TENANT_NAMESPACE}/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: tenant-repos
+  dependsOn:
+    - name: vars
+    - name: postgres
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: replacements
+      - kind: Secret
+        name: replacement
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
