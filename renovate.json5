@@ -1,0 +1,30 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>phoenix/renovate-config"
+  ],
+  "enabled": true,
+  "automerge": false,
+  "platformAutomerge": false,
+  "rebaseWhen": "behind-base-branch",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch"
+    },
+    {
+      "matchPackagePatterns": ["^@payloadcms/"],
+      "groupName": "Payload CMS packages",
+      "groupSlug": "payload-cms"
+    },
+    {
+      "matchPackagePatterns": ["^postgresql$", "^cloudnative-pg$"],
+      "groupName": "Database dependencies",
+      "groupSlug": "database"
+    }
+  ]
+}
