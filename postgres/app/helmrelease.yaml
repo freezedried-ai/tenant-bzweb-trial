@@ -1,0 +1,26 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: postgres
+spec:
+  chart:
+    spec:
+      chart: postgresql
+      version: 16.2.0
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami
+  values:
+    auth:
+      postgresPassword: ${POSTGRES_PASSWORD}
+      database: payload
+      username: payload
+    primary:
+      persistence:
+        enabled: true
+        storageClass: ocs-storagecluster-cephfs
+        size: 10Gi
+    readReplicas:
+      enabled: false
+    service:
+      type: ClusterIP
