@@ -1,0 +1,9 @@
+# SOPS configuration for tenant-bzweb-trial
+creation_rules:
+  - path_regex: .*secret\.sops\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: |
+      # Team member keys
+      age1qytwq8q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0
+      # Cluster recipient (flux-system/sops-age)
+      age1qytwq8q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q0q2q1
