@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replacements
+data:
+  TENANT_NAMESPACE: bzweb-trial
+  TENANT_DOMAIN: bzweb-trial.apps.basel.kvant.cloud
+  POSTGRES_PASSWORD: placeholder
+  PAYLOAD_SECRET: placeholder
+  PAYLOAD_PUBLIC_SERVER_URL: https://payload-bzweb-trial.apps.basel.kvant.cloud
+  PAYLOAD_PUBLIC_SITE_URL: https://payload-bzweb-trial.apps.basel.kvant.cloud
